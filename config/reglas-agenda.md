@@ -1,1 +1,1 @@
-Máximo de citas por día por profesional: 20
+Máximo de citas por día por profesional: 25
