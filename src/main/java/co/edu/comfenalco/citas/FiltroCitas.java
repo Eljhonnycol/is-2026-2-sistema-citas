@@ -5,9 +5,12 @@ import java.util.stream.Collectors;
 
 public class FiltroCitas {
 
-    public List<String> filtrar(List<String> citas, String e) {
+    public List<String> filtrarPorEspecialidad(List<String> citas, String especialidad) {
+        if (especialidad == null || especialidad.isBlank()) {
+            throw new IllegalArgumentException("La especialidad es obligatoria");
+        }
         return citas.stream()
-               .filter(c -> c.contains(e))
-               .collect(Collectors.toList());
+                .filter(cita -> cita.contains(especialidad))
+                .collect(Collectors.toList());
     }
 }
