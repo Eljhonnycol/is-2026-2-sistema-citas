@@ -1,57 +1,62 @@
 # Sistema de Citas - Proyecto de Aula
 
-Aplicación para agendar y consultar citas médicas por especialidad.
-
-> Este repositorio se usa únicamente para practicar el Taller de Git/GitHub de
-> Ingeniería de Software (VI semestre, II periodo académico 2026, Fundación
-> Universitaria Tecnológico Comfenalco). No contiene el proyecto de aula real.
+Aplicación para agendar y consultar citas médicas. Incluye el taller de **pruebas de software en Spring Boot**
+(Ingeniería de Software, VI semestre, II periodo 2026, Fundación Universitaria Tecnológico Comfenalco).
 
 ## Integrantes
 - Eljhonnycol (@Eljhonnycol) — trabajo individual
 
 ## Tecnologías
-- Java 17
-- Maven
-- JUnit 5
-- Git / GitHub / GitHub Actions
+Java 25 · Spring Boot 4.0.0 · Maven · Spring Data JPA + H2 · JUnit 5 · Mockito · MockMvc · Selenium 4.35 ·
+JaCoCo 0.8.15 · GitHub Actions
 
 ## Requisitos
-- Git
-- JDK 17
-- Maven 3.x
+- JDK 25 e IntelliJ IDEA con soporte para Java 25
+- Google Chrome (solo para la prueba Selenium)
 
-Verifica la instalación con `git --version`, `java -version` y `mvn -version`.
+## Ejecutar la aplicación
+Ejecutar `CitasApplication` y abrir <http://localhost:8080/citas.html>.
 
-## Clonar y ejecutar las pruebas
-```bash
-git clone https://github.com/Eljhonnycol/is-2026-2-sistema-citas.git
-cd is-2026-2-sistema-citas
-mvn verify
-```
+## Ejecutar las pruebas
+| Qué | Cómo |
+|---|---|
+| Una clase | IntelliJ: triángulo verde junto a la clase > Run |
+| Suite (excluye `ui`) | `mvn test` |
+| Suite + cobertura (mínimo 70 % de líneas) | `mvn verify` y abrir `target/site/jacoco/index.html` |
+| Selenium (`@Tag("ui")`) | Ejecutar `ReservaUITest` individualmente desde IntelliJ |
 
-Por ahora el proyecto no tiene una aplicación ejecutable (no hay método `main`):
-solo contiene la clase `FiltroCitas` con sus pruebas, que se validan con `mvn verify`.
+## Pruebas del taller (`src/test/java/.../citas`)
+| Clase | Tipo |
+|---|---|
+| `servicio/AgendaServiceTest` | Unitaria (JUnit + Mockito) |
+| `web/CitaControllerTest` | Controlador REST (MockMvc): 201, 400, 409 |
+| `repositorio/CitaRepositoryTest` | Persistencia (JPA + H2) |
+| `integracion/ReservaIntegracionTest` | Integración HTTP real: 201 y luego 409 |
+| `ui/ReservaUITest` | Interfaz (Selenium, Chrome headless) |
+
+Las clases de la actividad anterior (`AgendaCitas`, `FiltroCitas`, `RegistroPacientes`, etc., en el paquete raíz)
+se conservan con sus pruebas.
+
+## Reglas de negocio y API
+Un profesional no puede tener dos citas en el mismo horario y admite máximo 20 citas diarias.
+`POST /api/citas` responde **201** (creada), **409** (horario ocupado o cupo lleno) o **400** (datos inválidos).
+
+## Documentación del taller
+- [`docs/matriz-casos-prueba.md`](docs/matriz-casos-prueba.md)
+- [`docs/registro-defectos.md`](docs/registro-defectos.md)
 
 ## Estructura
 ```
-.github/workflows/ci.yml   Pipeline de GitHub Actions
-config/reglas-agenda.md    Regla usada en el ejercicio de conflictos (Nivel 4)
-src/main/java/...          Código fuente (FiltroCitas)
-src/test/java/...          Pruebas con JUnit 5
-pom.xml                    Configuración de Maven
+.github/workflows/ci.yml   Pipeline "Pruebas y cobertura" (mvn -B verify + artefacto reporte-jacoco)
+config/reglas-agenda.md    Regla usada por las pruebas de la actividad anterior
+docs/                      Matriz de casos y registro de defectos
+src/main/java/...          Código fuente (modelo, repositorio, servicio, web)
+src/main/resources/static/citas.html   Formulario de reserva
+src/test/java/...          Pruebas
+pom.xml                    Maven (Spring Boot 4.0.0, Java 25, JaCoCo)
 ```
 
 ## Flujo de trabajo
 - La rama `main` está protegida: todo cambio entra por Pull Request.
-- Una rama por historia o tarea, con prefijo `feature/`, `fix/`, `docs/` o `test/`
-  (por ejemplo `feature/HU03-buscar-citas-especialidad`).
-- Commits en formato Conventional Commits: `<tipo>(<alcance>): <descripción>`,
-  con tipos `feat`, `fix`, `docs`, `test`, `refactor` y `chore`.
-- El workflow `CI` ejecuta `mvn verify` en cada Pull Request hacia `main` y en cada
-  push a `main`.
-
-## Nota sobre el trabajo individual
-La guía del taller está pensada para equipos de 3 a 4 integrantes, con revisión de
-código por un compañero. Este trabajo lo realiza una sola persona, por lo que no hay
-revisores independientes y los merges los hace el administrador del repositorio. La
-forma de validar esos requisitos se consulta con el docente.
+- Una rama por tarea (`feature/`, `fix/`, `docs/`, `test/`) y commits en formato Conventional Commits.
+- El workflow ejecuta `mvn -B verify` en cada `push` y `pull_request`.

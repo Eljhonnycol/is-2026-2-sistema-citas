@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><title>Reservar cita</title></head>
+<body>
+<h1>Reservar cita</h1>
+<input id="profesional" placeholder="Profesional">
+<input id="fechaHora" type="datetime-local">
+<input id="pacienteId" placeholder="Documento del paciente">
+<button id="btnReservar">Reservar</button>
+<p id="mensaje"></p>
+<script>
+document.getElementById('btnReservar').addEventListener('click', async () => {
+  const fechaHora = document.getElementById('fechaHora').value;
+  const body = {
+    profesional: document.getElementById('profesional').value,
+    fechaHora: fechaHora ? fechaHora + ':00' : null,
+    pacienteId: document.getElementById('pacienteId').value
+  };
+  try {
+    const r = await fetch('/api/citas', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    });
+    document.getElementById('mensaje').textContent =
+      r.status === 201 ? 'Cita reservada'
+      : r.status === 409 ? 'Horario no disponible'
+      : 'Datos inválidos';
+  } catch (e) {
+    document.getElementById('mensaje').textContent = 'Error de conexión';
+  }
+});
+</script>
+</body>
+</html>
