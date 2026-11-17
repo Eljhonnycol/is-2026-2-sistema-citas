@@ -7,7 +7,10 @@ import java.util.regex.Pattern;
  */
 public record Paciente(String documento, String nombre, String correo) {
 
-    private static final Pattern FORMATO_CORREO = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
+
+    private static final Pattern FORMATO_CORREO = Pattern.compile(
+            "^[^@\\s]++@[^@\\s.]++(?:\\.[^@\\s.]++)*\\.[^@\\s.]++$"
+    );
 
     public Paciente {
         documento = exigirTexto(documento, "El documento");

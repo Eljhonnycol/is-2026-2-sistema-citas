@@ -8,3 +8,6 @@ target/
 .vscode/
 *.iml
 .DS_Store
+
+# Salidas del taller
+hs_err_pid*
